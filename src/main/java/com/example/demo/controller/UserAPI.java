@@ -86,7 +86,7 @@ public class UserAPI {
 	 * @param request 请求对象，从中获取session里面的用户信息以判断用户是否登录
 	 * @return 结果对象，已经登录则结果为成功，且数据体为用户信息；否则结果为失败，数据体为空
 	 */
-    @GetMapping("is-login")
+    @GetMapping("/is-login")
     public Result<User> isLogin(HttpServletRequest request) {
         return userService.isLogin(request.getSession());
     }
