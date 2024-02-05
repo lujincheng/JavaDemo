@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.model.dto.Result;
 import com.example.demo.model.entity.User;
 
-import jakarta.servlet.http.HttpSession;
-
 @Service
 public interface UserService {
     
@@ -35,10 +33,10 @@ public interface UserService {
     Result<User> update(User user) throws Exception;
 
     /**
-	 * 判断用户是否登录（实际上就是从session取出用户id去数据库查询并比对）
+	 * 判断用户是否登录
 	 *
 	 * @param session 传入请求session
 	 * @return 返回结果，若用户已登录则返回用户信息
 	 */
-    Result<User> isLogin(HttpSession session);
+    Result<User> isLogin(String token);
 }

@@ -3,16 +3,17 @@ package com.example.demo.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.controller.UserAPI;
 import com.example.demo.mapper.UserDao;
 import com.example.demo.model.dto.Result;
 import com.example.demo.model.entity.User;
 import com.example.demo.service.intf.UserService;
 import com.example.demo.utils.ClassExamine;
+import com.example.demo.utils.JwtUtil;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
-import jakarta.servlet.http.HttpSession;
+import io.micrometer.common.util.StringUtils;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -49,7 +50,11 @@ public class UserServiceImpl implements UserService {
             return result;
         }
 
+        String uuid = UUID.randomUUID().toString();
+        String jwtToken = JwtUtil.createJwtToken(uuid);
+        getUser.setToken(jwtToken);
         result.setResultSuccess("登录成功", getUser);
+
         return result;
     }
 
@@ -74,22 +79,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<User> isLogin(HttpSession session) {
+    public Result<User> isLogin(String token) {
         Result<User> result = new Result<>();
 
-        User sessionUser = (User) session.getAttribute(UserAPI.SESSION_NAME);
-        if (sessionUser == null) {
+        if (StringUtils.isEmpty(token) || !token.startsWith("Bearer ") || !JwtUtil.checkToken(token.substring(7))) {
             result.setResultFailed("用户未登录");
             return result;
         }
 
-        User getUser = userDao.getById(sessionUser.getId());
-        if (getUser == null || !getUser.getPassword().equals(sessionUser.getPassword())) {
-            result.setResultFailed("用户消息无效");
-            return result;
-        }
-
-        result.setResultSuccess("用户已登录", getUser);
+        result.setResultSuccess("用户已登录");
         return result;
     }
     

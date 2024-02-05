@@ -27,4 +27,6 @@ public class User {
     @NotEmpty(message = "密码不能为空")
     @Size(min = 8, message = "密码长度不能小于8")
     private String password;
+
+    private String token;
 }
